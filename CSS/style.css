@@ -162,7 +162,7 @@ h1 {
   cursor: pointer;
   margin-top: 50px; 
 
-  font-family: "Comic Sans MS", "Bradley Hand", cursive;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 12px;
 
   transform: rotate(-1deg);
