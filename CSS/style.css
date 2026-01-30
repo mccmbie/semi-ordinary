@@ -11,7 +11,7 @@ body {
   background-color: rgb(177, 223, 191);
   color: #e27cb4;
   perspective: 1000px; /* Important for 3D */
-  display: flex;
+    display: flex;
   flex-direction: column;
   align-items: center;
   align-items: center;
