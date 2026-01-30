@@ -256,3 +256,73 @@ canvas.addEventListener("touchcancel", (e) => {
 eraseBtn.addEventListener("click", () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
+
+// Payment button and popup
+const paymentBtn = document.getElementById("payment-btn");
+const paymentPopup = document.getElementById("payment-popup");
+const popupClose = document.getElementById("popup-close");
+
+paymentBtn.addEventListener("click", () => {
+  // Show popup
+  paymentPopup.style.display = "block";
+  // Start flashing
+  paymentPopup.style.animation = "flash 0.5s infinite";
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const paymentBtn = document.getElementById("payment-btn");
+  const popup = document.getElementById("payment-popup");
+  const closeBtn = document.getElementById("popup-close");
+
+  let stage = 0; // 0 = top-right, 1 = top-left
+
+  if (!paymentBtn || !popup || !closeBtn) {
+    console.error("Popup elements missing");
+    return;
+  }
+
+  paymentBtn.addEventListener("click", () => {
+    popup.style.display = "block";
+    popup.style.animation = "flash 0.5s infinite";
+
+    // reset state every time popup opens
+    stage = 0;
+    closeBtn.style.right = "8px";
+    closeBtn.style.left = "auto";
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent accidental bubbling
+
+    if (stage === 0) {
+      // first click → move X
+      closeBtn.style.right = "auto";
+      closeBtn.style.left = "8px";
+      stage = 1;
+    } else {
+      // second click → close popup
+      popup.style.display = "none";
+      popup.style.animation = "none";
+    }
+  });
+});
+
+
+// Get the heading element
+const heading = document.getElementById("main-heading");
+
+if (heading) {
+  heading.addEventListener("click", () => {
+    // Reset transform to start position
+    heading.style.transition = "none"; // remove transition temporarily
+    heading.style.transform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg)";
+
+    // Force reflow to apply the reset (trick to allow re-animation)
+    heading.offsetHeight; 
+
+    // Add transition back and animate spin
+    heading.style.transition = "transform 5000ms ease-in-out";
+    heading.style.transform = "rotateX(1080deg) rotateY(3600deg) rotateZ(1080deg)";
+  });
+}
+
