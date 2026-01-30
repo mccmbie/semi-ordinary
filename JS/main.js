@@ -119,6 +119,15 @@ function getMousePos(e) {
   };
 }
 
+// Convert touch position to canvas coords
+function getTouchPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: e.touches[0].clientX - rect.left,
+    y: e.touches[0].clientY - rect.top
+  };
+}
+
 // Helper function to get elements that should drift
 function getDriftTargets() {
   const contentWrapper = document.querySelector('.content-wrapper');
@@ -175,7 +184,7 @@ drawToggle.addEventListener("click", () => {
   canvas.style.pointerEvents = drawingEnabled ? "auto" : "none";
 });
 
-// Mouse events for drawing
+// ==================== MOUSE EVENTS ====================
 canvas.addEventListener("mousedown", (e) => {
   if (!drawingEnabled) return;
   drawing = true;
@@ -204,6 +213,42 @@ canvas.addEventListener("mouseup", () => {
 });
 
 canvas.addEventListener("mouseleave", () => {
+  drawing = false;
+});
+
+// ==================== TOUCH EVENTS (MOBILE SUPPORT) ====================
+canvas.addEventListener("touchstart", (e) => {
+  if (!drawingEnabled) return;
+  e.preventDefault(); // Prevent scrolling while drawing
+  drawing = true;
+  const pos = getTouchPos(e);
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  if (!drawing || !drawingEnabled) return;
+  e.preventDefault(); // Prevent scrolling while drawing
+  const pos = getTouchPos(e);
+
+  ctx.lineTo(pos.x, pos.y);
+  ctx.strokeStyle = "red";
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.stroke();
+
+  // Call driftElements function to update the position of the elements
+  driftElements();
+});
+
+canvas.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  drawing = false;
+});
+
+canvas.addEventListener("touchcancel", (e) => {
+  e.preventDefault();
   drawing = false;
 });
 
