@@ -53,6 +53,7 @@ h1 {
   border: none;
   cursor: pointer;
   margin-bottom: 1rem;
+  margin-top: 150px; 
 
   background:
     radial-gradient(circle at 30% 30%, #ff4d4d, #b30000 60%, #7a0000 100%);
@@ -158,6 +159,7 @@ h1 {
   color: #111;
   border: 2px solid #111;
   cursor: pointer;
+  margin-top: 50px; 
 
   font-family: "Comic Sans MS", "Bradley Hand", cursive;
   font-size: 12px;
@@ -203,4 +205,61 @@ h1 {
 /* Apply transition to driftable elements */
 .content-wrapper * {
   transition: transform 0.15s ease-out;
+}
+
+
+/* Payment button styling */
+#payment-btn {
+  background: linear-gradient(to bottom, #f2c853, #efcb54);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px #eea141;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+#payment-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px #cb5b1f;
+}
+
+/* Pop-up styling */
+#payment-popup {
+  display: none; /* hidden by default */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  background: white;
+  border: 7px solid red;
+  padding: 20px;
+  z-index: 2000;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  animation: none;
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 18px;
+}
+
+/* Flashing effect */
+@keyframes flash {
+  0%, 100% { border-color: red; }
+  50% { border-color: rgb(255, 0, 144); }
+}
+
+/* Close button */
+#popup-close {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  font-size: 50px;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
+  user-select: none;
 }
