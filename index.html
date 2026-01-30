@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Heading Spin</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<button id="generate-btn" aria-label="panic button"></button>
+<p id="output"></p>
+
+  <header>
+    <h1 id="main-heading">Spinning Text</h1>
+    <p>Seen Above is Spinning Text™</p>
+<p>Available to rent out at a very reasonable price.</p>
+<p>Only $7.49 (AUD) a week.</p>
+<p><i>"Apply it to your website... it's <b>worth</b> it!" – Review</i></p>
+  </header>
+
+  <main>
+    <p>This is a normal paragraph of text.</p>
+
+    <p>
+      This sentence has
+      <span class="bold">bold text</span>
+      and
+      <span class="underline">underlined text</span>.
+    </p>
+
+    <p>The
+      <span class="red"> BUTTON</span>
+      will tell you what you need to hear...
+    </p>
+
+    <p class="large-text">
+      This paragraph is slightly larger than the rest.
+    </p>
+  </main>
+
+  <script src="js/main.js" defer></script>
+  <div id="game">
+  <p id="game-instructions">Wait for green… then click.</p>
+
+  <div id="game-area">
+    <div id="reaction-box"></div>
+
+    <div id="stats">
+      <p id="current-time">— ms</p>
+
+      <div id="highscore">
+        <p class="title">highscore</p>
+        <p id="best-time">— ms</p>
+      </div>
+    </div>
+  </div>
+
+  <p id="fail-message">FAIL</p>
+</div>
+
+<div id="draw-controls">
+  <button id="draw-toggle">DRAW</button>
+  <button id="erase">ERASE</button>
+</div>
+
+<canvas id="draw-canvas"></canvas>
+
+</body>
+</html>
