@@ -101,14 +101,15 @@
 
 <canvas id="draw-canvas"></canvas>
 
-<!-- Firebase Script -->
+<!-- Firebase Script - WITH HISTORY LOGGING -->
 <script type="module">
-  // Import Firebase (using consistent version 10.12.2)
+  // Import Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getDatabase,
     ref,
     set,
+    push,
     onValue
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -132,8 +133,9 @@
   const submit = document.getElementById("name-submit");
   const display = document.getElementById("current-name");
 
-  // Reference to the database
-  const nameRef = ref(db, "currentName");
+  // References to the database
+  const currentNameRef = ref(db, "currentName");
+  const historyRef = ref(db, "nameHistory");
 
   // Function to submit name
   function submitName() {
@@ -143,10 +145,24 @@
       return;
     }
 
-    // Save to Firebase
-    set(nameRef, name)
+    // Get current timestamp
+    const timestamp = Date.now();
+    const date = new Date(timestamp).toLocaleString();
+
+    // Save to current name (what everyone sees)
+    set(currentNameRef, name)
       .then(() => {
         console.log("Name saved successfully!");
+        
+        // Also save to history with timestamp
+        return push(historyRef, {
+          name: name,
+          timestamp: timestamp,
+          date: date
+        });
+      })
+      .then(() => {
+        console.log("Name logged to history!");
         input.value = ""; // Clear input
       })
       .catch((error) => {
@@ -165,8 +181,8 @@
     }
   });
 
-  // Listen for live updates from Firebase
-  onValue(nameRef, (snapshot) => {
+  // Listen for live updates to current name
+  onValue(currentNameRef, (snapshot) => {
     const name = snapshot.val();
     if (name) {
       display.textContent = name;
