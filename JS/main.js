@@ -1,3 +1,4 @@
+// 3D Spinning Heading Animation
 window.addEventListener("load", () => {
   const heading = document.getElementById("main-heading");
   if (!heading) return;
@@ -12,6 +13,7 @@ window.addEventListener("load", () => {
   }, 50);
 });
 
+// Random Word Generator
 document.addEventListener("DOMContentLoaded", () => {
   const button = document.getElementById("generate-btn");
   const output = document.getElementById("output");
@@ -26,8 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       const data = await response.json();
 
-      const randomIndex = Math.floor(Math.random() * data.length);
-      output.textContent = data[randomIndex].word;
+      if (data.length > 0) {
+        const randomIndex = Math.floor(Math.random() * data.length);
+        output.textContent = data[randomIndex].word;
+      } else {
+        output.textContent = "No word found";
+      }
     } catch (error) {
       output.textContent = "Error fetching word";
       console.error(error);
@@ -36,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   button.addEventListener("click", getRandomWord);
 });
+
+// Reaction Time Game
 const box = document.getElementById("reaction-box");
 const currentTimeEl = document.getElementById("current-time");
 const bestTimeEl = document.getElementById("best-time");
@@ -80,6 +88,7 @@ box.addEventListener("click", () => {
 
 startGame();
 
+// Drawing Canvas Setup
 const canvas = document.getElementById("draw-canvas");
 const ctx = canvas.getContext("2d");
 
@@ -110,6 +119,55 @@ function getMousePos(e) {
   };
 }
 
+// Helper function to get elements that should drift
+function getDriftTargets() {
+  const contentWrapper = document.querySelector('.content-wrapper');
+  if (!contentWrapper) return [];
+  
+  return Array.from(contentWrapper.querySelectorAll('*')).filter(el => {
+    return (
+      el.id !== "draw-canvas" &&
+      el.id !== "draw-controls" &&
+      !el.closest("#draw-controls")
+    );
+  });
+}
+
+// Initialize base transforms on load
+window.addEventListener("load", () => {
+  getDriftTargets().forEach(el => {
+    const currentTransform = getComputedStyle(el).transform;
+    el.dataset.baseTransform = currentTransform === "none" ? "" : currentTransform;
+    el.dataset.driftX = "0";
+    el.dataset.driftY = "0";
+  });
+});
+
+// Drift elements function
+function driftElements() {
+  const elements = getDriftTargets();
+
+  elements.forEach(el => {
+    // Read previous drift values
+    const currentX = el.dataset.driftX ? parseFloat(el.dataset.driftX) : 0;
+    const currentY = el.dataset.driftY ? parseFloat(el.dataset.driftY) : 0;
+
+    // Small random movement
+    const dx = (Math.random() - 0.5) * 3;
+    const dy = (Math.random() - 0.5) * 3;
+
+    const newX = currentX + dx;
+    const newY = currentY + dy;
+
+    el.dataset.driftX = newX;
+    el.dataset.driftY = newY;
+
+    // Apply transform
+    const baseTransform = el.dataset.baseTransform || "";
+    el.style.transform = `${baseTransform} translate(${newX}px, ${newY}px)`;
+  });
+}
+
 // Toggle drawing
 drawToggle.addEventListener("click", () => {
   drawingEnabled = !drawingEnabled;
@@ -117,8 +175,14 @@ drawToggle.addEventListener("click", () => {
   canvas.style.pointerEvents = drawingEnabled ? "auto" : "none";
 });
 
-// Mouse events
-
+// Mouse events for drawing
+canvas.addEventListener("mousedown", (e) => {
+  if (!drawingEnabled) return;
+  drawing = true;
+  const pos = getMousePos(e);
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+});
 
 canvas.addEventListener("mousemove", (e) => {
   if (!drawing || !drawingEnabled) return;
@@ -139,70 +203,11 @@ canvas.addEventListener("mouseup", () => {
   drawing = false;
 });
 
-canvas.addEventListener("mousedown", (e) => {
-  if (!drawingEnabled) return;
-  drawing = true;
-  const pos = getMousePos(e);
-  ctx.beginPath();
-  ctx.moveTo(pos.x, pos.y);
-});
-
-
 canvas.addEventListener("mouseleave", () => {
   drawing = false;
 });
 
-// Erase
+// Erase canvas
 eraseBtn.addEventListener("click", () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
-
-
-function driftElements() {
-  const elements = function getDriftTargets() {
-  return Array.from(document.body.querySelectorAll("*")).filter(el => {
-    return (
-      el.id !== "draw-canvas" &&
-      el.id !== "draw-controls" &&
-      !el.closest("#draw-controls")
-    );
-  });
-}
-;
-
-  elements.forEach(el => {
-    // Read previous drift values
-    const currentX = el.dataset.driftX ? parseFloat(el.dataset.driftX) : 0;
-    const currentY = el.dataset.driftY ? parseFloat(el.dataset.driftY) : 0;
-
-    // Small random movement
-    const dx = (Math.random() - 0.5) * 2;
-    const dy = (Math.random() - 0.5) * 2;
-
-    const newX = currentX + dx;
-    const newY = currentY + dy;
-
-    el.dataset.driftX = newX;
-    el.dataset.driftY = newY;
-
-    el.style.transform = `${el.dataset.baseTransform || ""} translate(${newX}px, ${newY}px)`;
-  });
-}
-
-window.addEventListener("load", () => {
-  getDriftTargets().forEach(el => {
-    el.dataset.baseTransform = getComputedStyle(el).transform === "none"
-      ? ""
-      : getComputedStyle(el).transform;
-  });
-});
-
-
-function getDriftTargets() {
-  return Array.from(document.body.children).filter(el => {
-    return (
-      el.id !== "draw-canvas" &&
-      el.id !== "draw-controls"
-    );
-  });
-}
