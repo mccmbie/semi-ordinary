@@ -22,26 +22,23 @@
 
   <br>
 
-<!-- Payment Button -->
-<button id="payment-btn">Pay Now</button>
+  <!-- Payment Button -->
+  <button id="payment-btn">Pay Now</button>
 
-<!-- Pop-up message -->
-<div id="payment-popup">
-  <span id="popup-close">×</span>
-  <p><b>Sorry</b></p>
-    <p>Spinning Text™ is rented to maximum capacity. </p>
-
+  <!-- Pop-up message -->
+  <div id="payment-popup">
+    <span id="popup-close">×</span>
+    <p><b>Sorry</b></p>
+    <p>Spinning Text™ is rented to maximum capacity.</p>
     <p>Try again later.</p>
-  <p>Thank you.</p>
-
-</div>
-
+    <p>Thank you.</p>
+  </div>
 
   <main>
     <br>
     <br>
     <br>
-    </p>This is a normal paragraph of text.</p>
+    <p>This is a normal paragraph of text.</p>
 
     <p>
       This sentence has
@@ -78,6 +75,23 @@
 
     <p id="fail-message">FAIL</p>
   </div>
+
+  <!-- Name display area - floating above input -->
+  <div id="name-display">
+    <p id="powered-by-text">Powered by:</p>
+    <p id="current-name">—</p>
+  </div>
+
+  <!-- Name input area -->
+  <div id="name-area">
+    <input
+      id="name-input"
+      type="text"
+      placeholder="Enter your name"
+    />
+    <button id="name-submit">Submit</button>
+  </div>
+
 </div>
 
 <div id="draw-controls">
@@ -87,6 +101,86 @@
 
 <canvas id="draw-canvas"></canvas>
 
+<!-- Firebase Script -->
+<script type="module">
+  // Import Firebase (using consistent version 10.12.2)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    set,
+    onValue
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyC7-2Znp822GLRFiUf7eQnecFpMVaig6U0",
+    authDomain: "semi-ordinary.firebaseapp.com",
+    databaseURL: "https://semi-ordinary-default-rtdb.firebaseio.com", // REPLACE WITH YOUR URL
+    projectId: "semi-ordinary",
+    storageBucket: "semi-ordinary.firebasestorage.app",
+    messagingSenderId: "668925450838",
+    appId: "1:668925450838:web:a1b4008a98d759f032f9f7"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Grab elements from the page
+  const input = document.getElementById("name-input");
+  const submit = document.getElementById("name-submit");
+  const display = document.getElementById("current-name");
+
+  // Reference to the database
+  const nameRef = ref(db, "currentName");
+
+  // Function to submit name
+  function submitName() {
+    const name = input.value.trim();
+    if (!name) {
+      alert("Please enter a name!");
+      return;
+    }
+
+    // Save to Firebase
+    set(nameRef, name)
+      .then(() => {
+        console.log("Name saved successfully!");
+        input.value = ""; // Clear input
+      })
+      .catch((error) => {
+        console.error("Error saving name:", error);
+        alert("Failed to save name. Check console for details.");
+      });
+  }
+
+  // When user clicks submit button
+  submit.addEventListener("click", submitName);
+
+  // When user presses Enter key in the input
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      submitName();
+    }
+  });
+
+  // Listen for live updates from Firebase
+  onValue(nameRef, (snapshot) => {
+    const name = snapshot.val();
+    if (name) {
+      display.textContent = name;
+      console.log("Name updated to:", name);
+    } else {
+      display.textContent = "—";
+      console.log("No name in database yet");
+    }
+  });
+
+  console.log("Firebase initialized successfully!");
+</script>
+
 <script src="JS/main.js" defer></script>
+
 </body>
 </html>
